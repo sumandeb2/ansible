@@ -1,0 +1,17 @@
+---
+- hosts: testservers
+
+  tasks:
+  - name: create the user account
+    user: name=suman password=redhat home=/opt/suman
+  - name: install apache package and configure apache
+    yum:  name=httpd state=present
+  - name: apache should be running
+    service: name=httpd state=started
+  - name: configure apache config file
+    template: src=/tmp/httpd.conf dest=/etc/httpd/conf/httpd.conf
+    notify: "restart apache"
+
+  handlers:
+    - name: restart apache
+      service: name=httpd state=restarted
